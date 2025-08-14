@@ -1,0 +1,94 @@
+# Design Document — Claim-Date Extraction Project (FACTors)
+
+## 1. Project Overview
+- **Purpose:** Extract claim dates from URLs in `FACTors.csv` to support fact-checking workflows.
+- **Scope:** Works with AFP, AfricaCheck, and generic news/fact-checking sites. Supports large datasets asynchronously.
+
+## 2. System Architecture
+**High-level components:**
+1. **Input Loader**
+   - `load_urls(csv_path)`
+   - Loads URLs efficiently in chunks to minimise memory usage
+2. **Asynchronous Fetcher**
+   - `fetch_with_retry(session, url, semaphore)`
+   - Handles concurrent HTTP requests with retries, timeout, and rate-limiting
+3. **Date Extractor**
+   - `extract_date_from_content(item)`
+   - Domain-specific extraction logic:
+     - AFP (`extract_afp_date()`)
+     - AfricaCheck (`extract_africacheck_date()`)
+     - Generic fallback (`extract_generic_date()`, `try_alternative_date_methods()`)
+4. **Batch Processor**
+   - `process_in_batches(urls, batch_size=20000)`
+   - Executes fetch and extraction concurrently in manageable batches
+5. **Output Writer**
+   - Saves two CSVs:
+     - Success (`Claim Date` found)
+     - Failure (`Date not found` / errors)
+6. **Utilities**
+   - Logging, URL parsing, user-agent randomization
+7. **Shell Script**
+   - `run_scraper.sh` automates execution on Linux/WSL/Colab
+
+**Diagram (suggested):**
+
+```
+[FACTors.csv] --> [URL Loader] --> [Async Fetcher w/ Semaphore] --> [Date Extractor]
+                                                      |
+                                                      v
+                                             [Batch Processor] --> [Success CSV]
+                                                      |
+                                                      v
+                                                [Failed CSV]
+```
+
+## 3. Data Flow
+1. Load CSV in chunks to avoid memory overload
+2. Asynchronously fetch HTML content from each URL
+3. Determine the domain and select the extraction logic
+4. Attempt primary date extraction
+5. If unsuccessful, apply fallback extraction
+6. Write outputs to CSV files
+7. Log progress and errors in `factcheck_scraper.log`
+
+## 4. Key Functions & Methods
+| Function | Purpose | Notes |
+|----------|---------|------|
+| `load_urls()` | Load URLs from CSV efficiently | Handles large files, removes duplicates |
+| `fetch_with_retry()` | Fetch content asynchronously | Retries, timeout, headers randomized |
+| `extract_date_from_content()` | Extract claim date from HTML | Domain-specific and fallback methods |
+| `process_in_batches()` | Batch processing | Uses ThreadPoolExecutor for parsing |
+| `run_async_fetcher()` | Manage event loop | Handles Windows/Unix differences |
+
+## 5. Error Handling
+- 404 pages, non-HTML responses, connection timeouts
+- Logs written for every failure
+- Retry with exponential backoff
+- Fallback extraction ensures partial success
+
+## 6. Limitations
+- Missing dates if HTML structure changes
+- Huge datasets may require splitting
+- Non-HTML URLs ignored (logged as failed)
+
+## 7. Technologies & Dependencies
+- Python 3.10+
+- Libraries:
+  - pandas, aiohttp, BeautifulSoup4, lxml, fake-useragent, tqdm, nest_asyncio
+- Optional: virtual environment
+- Execution: `run_scraper.sh` or direct Python run
+
+## 8. Output Specification
+- **Success CSV:** `URL`, `Claim Date`, `Status`
+- **Failure CSV:** `URL`, `Claim Date`=None, `Status` with error or fallback reason
+- Logs for tracking runtime and errors
+
+## 9. Extensibility
+- Add new domain-specific extractors in `utils/` and update `extract_date_from_content()`
+- Easily swap CSV input/output paths
+- Adjust concurrency or batch size for larger datasets
+
+## 10. References
+- AFP, AfricaCheck website structures
+- Python documentation: asyncio, aiohttp, BeautifulSoup
+- Arxiv paper: "AI/ML for Network Security: The Emperor has no Clothes" (if relevant context)
