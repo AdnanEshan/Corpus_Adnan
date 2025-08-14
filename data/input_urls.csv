@@ -1,0 +1,10 @@
+import pandas as pd
+
+# Load the large FACTors.csv
+df = pd.read_csv("FACTors.csv", usecols=["url"])
+
+# Take a sample (e.g., 1000 URLs) or the first 1000 rows
+sample_df = df.head(1000)  # or df.sample(1000, random_state=42)
+
+# Save as input_urls.csv in your corpus/data folder
+sample_df.to_csv("corpus/data/input_urls.csv", index=False)
