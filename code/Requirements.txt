@@ -9,6 +9,3 @@ nest_asyncio==1.5.8
 Anyone can install all dependencies with:
 
 
-```bash
-pip install -r code/requirements.txt
-```
