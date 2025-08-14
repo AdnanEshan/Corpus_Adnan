@@ -1,0 +1,7 @@
+This contains helper modules used by your main script (claim_date_extractor.py). Typical structure:
+
+
+utils/
+├── extractors.py   # Functions to extract dates from specific sites (AFP, AfricaCheck, generic)
+├── parsers.py      # Helper functions for HTML parsing, regex date parsing, fallback methods
+└── helpers.py      # Misc reusable functions (e.g., logging setup, URL sanitization)
