@@ -1,1 +1,15 @@
+## Artefacts
+
+The `artefacts/` folder contains evidence of the project in action and supporting materials that demonstrate the functionality and results of the claim-date extraction code.
+
+### Contents
+
+- **screenshots/**  
+  Screenshots of successful scraper runs, showing the console output, progress bars, and examples of extracted claim dates. These provide visual confirmation that the code executes correctly.
+
+
+
+### Purpose
+
+The artefacts folder provides examiners and users with tangible evidence of the scraper’s operation and outcomes. It complements the output CSV files by showing a real-time view of execution, helping verify that the code performs as intended.
 
