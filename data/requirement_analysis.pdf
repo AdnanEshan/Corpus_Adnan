@@ -1,0 +1,50 @@
+The goal of this project is to develop a Python-based web scraping solution that extracts the “claim date” from a large list of provided URLs. The system must read the URLs from an input CSV file, process each URL efficiently, and store the extracted results in an output CSV file.
+
+#Functional Requirements
+
+1. Input Handling
+
+2. The script must load a list of URLs from a CSV file (e.g., input_urls.csv).
+
+3. It must support reading large datasets (over 100,000 URLs).
+
+
+#Web Scraping Logic
+
+For each URL, the scraper must send an HTTP request to retrieve the HTML content.
+
+It must use BeautifulSoup to parse the HTML and extract the “claim date” from the relevant element.
+
+If the claim date is not found, the scraper should retry the request or use an alternative parsing method.
+
+Error Handling & Logging
+
+The script must handle network timeouts, request failures, and invalid URLs without crashing.
+
+Failed URLs must be logged into a separate file for review.
+
+
+
+#Output Handling
+
+The extracted claim dates must be stored in an output CSV file (output_claim_dates.csv) along with their corresponding URLs.
+
+If a claim date is missing, the output must indicate N/A or a similar placeholder.
+
+Performance Optimization
+
+The system should use concurrent processing (e.g., concurrent futures or threading) to reduce execution time for large datasets.
+
+The scraper must include request delays or headers to prevent blocking by servers.
+
+
+
+#Non-Functional Requirements
+
+Reliability: The system must be able to handle interruptions and resume from the last processed URL.
+
+Scalability: The solution should remain efficient as the number of URLs increases.
+
+Maintainability: The code must be modular, with clear function definitions for input handling, scraping, and output handling.
+
+Portability: The script must run on Windows, macOS, and Linux environments with Python 3.x.
